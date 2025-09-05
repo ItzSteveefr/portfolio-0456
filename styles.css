@@ -61,6 +61,8 @@ nav .logo p {
 
 .hero-footer {
     bottom: 0;
+    opacity: 0;
+    visibility: hidden;
 }
 
 .hero-footer p {
@@ -150,7 +152,7 @@ nav .logo p {
     background-color: var(--base-100);
     mask:
         linear-gradient(var(--base-300), var(--base-300)),
-        url("mask.svg") center/50% no-repeat;
+        url("/mask.svg") center/50% no-repeat;
     mask-composite: subtract;
     will-change: transform;
     z-index: 9;
@@ -207,7 +209,7 @@ nav .logo p {
     .preloader-mask {
         mask:
             linear-gradient(var(--base-300), var(--base-300)),
-            url("mask.svg") center/90% no-repeat;
+            url("/mask.svg") center/90% no-repeat;
         mask-composite: subtract;
     }
 
