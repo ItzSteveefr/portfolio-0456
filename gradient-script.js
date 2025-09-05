@@ -5,7 +5,9 @@ let scene, camera, renderer, fluidTarget1, fluidTarget2, displayMaterial;
 let mouse = { x: 0, y: 0, prevX: 0, prevY: 0, isDown: false };
 let isInitialized = false;
 let isStarted = false;
+let isReady = false;
 let animationId;
+let readyCallbacks = [];
 
 // Shader uniforms with default values
 const uniforms = {
@@ -203,11 +205,25 @@ export function initGradient() {
     script.onload = () => {
       initThreeJS();
       isInitialized = true;
+      // Mark as ready after a brief initialization period
+      setTimeout(() => {
+        isReady = true;
+        readyCallbacks.forEach((callback) => callback());
+        readyCallbacks = [];
+        console.log("🌈 Gradient fully ready");
+      }, 100);
     };
     document.head.appendChild(script);
   } else {
     initThreeJS();
     isInitialized = true;
+    // Mark as ready immediately if Three.js already loaded
+    setTimeout(() => {
+      isReady = true;
+      readyCallbacks.forEach((callback) => callback());
+      readyCallbacks = [];
+      console.log("🌈 Gradient fully ready");
+    }, 100);
   }
 
   window.addEventListener("resize", handleResize);
@@ -218,19 +234,16 @@ export function startGradient() {
 
   isStarted = true;
 
-  // Fade in gradient elements
-  gsap.to(".gradient-canvas", {
-    opacity: 1,
-    duration: 1,
-    ease: "power2.out",
-  });
-
-  gsap.to([".hero-logo", "nav"], {
+  // Immediately show gradient elements - no delay
+  gsap.set(".gradient-canvas", { opacity: 1 });
+  gsap.set([".hero-logo", "nav"], {
     opacity: 1,
     visibility: "visible",
-    duration: 1.5,
-    delay: 0.5,
-    ease: "power2.out",
+  });
+
+  // Hero footer will be animated by main script
+  gsap.set(".hero-footer", {
+    visibility: "visible",
   });
 
   render();
@@ -243,4 +256,16 @@ export function stopGradient() {
     animationId = null;
   }
   isStarted = false;
+}
+
+export function onGradientReady(callback) {
+  if (isReady) {
+    callback();
+  } else {
+    readyCallbacks.push(callback);
+  }
+}
+
+export function isGradientReady() {
+  return isReady;
 }
